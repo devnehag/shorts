@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leaner Fitness – Promo Video</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@300;400;700&family=Inter:wght@300;400&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --gold: #F5C518;
+    --white: #FFFFFF;
+    --dark: #0a0a0a;
+    --mid: #1a1a1a;
+  }
+
+  body {
+    background: #000;
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+    font-family: 'Oswald', sans-serif;
+  }
+
+  /* ── SCENE SYSTEM ── */
+  .scene {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s ease;
+  }
+  .scene.active { opacity: 1; pointer-events: all; }
+
+  /* ── BG IMAGE ── */
+  .bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    transform: scale(1.08);
+    transition: transform 6s ease;
+  }
+  .scene.active .bg { transform: scale(1); }
+
+  /* Dark overlay */
+  .overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(160deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.7) 100%);
+  }
+
+  /* Gold accent bar */
+  .accent-bar {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 4px;
+    background: var(--gold);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.8s ease 0.3s;
+  }
+  .scene.active .accent-bar { transform: scaleX(1); }
+
+  /* ── CONTENT ── */
+  .content {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 0 40px;
+    max-width: 900px;
+  }
+
+  .eyebrow {
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    font-size: clamp(11px, 1.5vw, 14px);
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s ease 0.2s;
+    margin-bottom: 14px;
+  }
+  .scene.active .eyebrow { opacity: 1; transform: translateY(0); }
+
+  .headline {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(52px, 10vw, 110px);
+    line-height: 0.92;
+    color: var(--white);
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s ease 0.35s;
+    text-shadow: 0 4px 30px rgba(0,0,0,0.5);
+  }
+  .scene.active .headline { opacity: 1; transform: translateY(0); }
+
+  .headline span { color: var(--gold); }
+
+  .subline {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 300;
+    font-size: clamp(14px, 2.5vw, 22px);
+    letter-spacing: 0.12em;
+    color: rgba(255,255,255,0.85);
+    margin-top: 16px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s ease 0.55s;
+  }
+  .scene.active .subline { opacity: 1; transform: translateY(0); }
+
+  /* ── LOGO SCENE ── */
+  .logo-lock {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    opacity: 0;
+    transform: scale(0.85);
+    transition: all 0.7s cubic-bezier(0.22,1,0.36,1) 0.1s;
+  }
+  .scene.active .logo-lock { opacity: 1; transform: scale(1); }
+
+  .logo-wordmark {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(68px, 13vw, 140px);
+    letter-spacing: 0.08em;
+    color: #fff;
+    line-height: 1;
+  }
+  .logo-wordmark .lean { color: var(--gold); }
+  .logo-sub {
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    letter-spacing: 0.6em;
+    font-size: clamp(10px, 1.8vw, 16px);
+    color: rgba(255,255,255,0.7);
+    text-transform: uppercase;
+  }
+
+  /* Gold divider */
+  .divider {
+    width: 0;
+    height: 2px;
+    background: var(--gold);
+    margin: 18px auto;
+    transition: width 0.8s ease 0.5s;
+  }
+  .scene.active .divider { width: 120px; }
+
+  /* ── REVIEW SCENE ── */
+  .review-box {
+    background: rgba(0,0,0,0.75);
+    border: 1px solid rgba(245,197,24,0.3);
+    border-radius: 4px;
+    padding: 36px 48px;
+    max-width: 700px;
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.7s ease 0.2s;
+  }
+  .scene.active .review-box { opacity: 1; transform: translateY(0); }
+
+  .stars {
+    color: var(--gold);
+    font-size: 28px;
+    letter-spacing: 4px;
+    margin-bottom: 20px;
+  }
+  .review-text {
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    font-size: clamp(14px, 2vw, 18px);
+    line-height: 1.65;
+    color: rgba(255,255,255,0.92);
+    font-style: italic;
+    margin-bottom: 20px;
+  }
+  .review-name {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    font-size: 14px;
+    text-transform: uppercase;
+  }
+
+  /* ── CTA SCENE ── */
+  .cta-box {
+    text-align: center;
+    opacity: 0;
+    transform: translateY(25px);
+    transition: all 0.6s ease 0.2s;
+  }
+  .scene.active .cta-box { opacity: 1; transform: translateY(0); }
+
+  .cta-main {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(42px, 8vw, 90px);
+    color: #fff;
+    line-height: 1;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.6);
+  }
+  .cta-main span { color: var(--gold); }
+
+  .cta-secondary {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 300;
+    font-size: clamp(16px, 2.8vw, 26px);
+    letter-spacing: 0.2em;
+    color: rgba(255,255,255,0.8);
+    margin-top: 10px;
+  }
+
+  .cta-button {
+    display: inline-block;
+    margin-top: 32px;
+    padding: 16px 48px;
+    background: var(--gold);
+    color: #000;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 0.15em;
+    text-decoration: none;
+    border-radius: 2px;
+    opacity: 0;
+    transform: translateY(15px);
+    transition: all 0.5s ease 0.7s;
+  }
+  .scene.active .cta-button { opacity: 1; transform: translateY(0); }
+
+  .location-tag {
+    margin-top: 24px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    font-size: 13px;
+    letter-spacing: 0.3em;
+    color: rgba(255,255,255,0.45);
+    text-transform: uppercase;
+    opacity: 0;
+    transition: opacity 0.5s ease 1s;
+  }
+  .scene.active .location-tag { opacity: 1; }
+
+  /* ── PROGRESS BAR ── */
+  #progress-bar {
+    position: fixed;
+    bottom: 0; left: 0;
+    height: 3px;
+    background: var(--gold);
+    z-index: 999;
+    width: 0%;
+    transition: width 0.1s linear;
+  }
+
+  /* ── SCENE INDICATOR ── */
+  #dots {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 999;
+  }
+  .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+    transition: all 0.3s ease;
+  }
+  .dot.active {
+    background: var(--gold);
+    transform: scale(1.3);
+  }
+
+  /* ── GRAIN TEXTURE OVERLAY ── */
+  #grain {
+    position: fixed;
+    inset: 0;
+    z-index: 998;
+    opacity: 0.04;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  }
+
+  /* Scene-specific BG colors for fallback */
+  #s0 .bg { background-color: #111; }
+  #s1 .bg { background-color: #1a1a1a; }
+  #s2 .bg { background-color: #151515; }
+  #s3 .bg { background-color: #0d0d0d; }
+  #s4 .bg { background-color: #111; }
+  #s5 .bg { background-color: #0a0a0a; }
+
+  /* Flash transition helper */
+  #flash {
+    position: fixed;
+    inset: 0;
+    background: #fff;
+    z-index: 990;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.08s ease;
+  }
+
+  /* Play button overlay */
+  #play-screen {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    gap: 24px;
+  }
+  #play-screen h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(36px, 7vw, 72px);
+    color: #fff;
+    letter-spacing: 0.1em;
+  }
+  #play-screen h1 span { color: var(--gold); }
+  #play-btn {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
+  }
+  #play-btn:hover { transform: scale(1.1); }
+  #play-btn svg { margin-left: 6px; }
+  #play-screen p {
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    color: rgba(255,255,255,0.4);
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+
+<div id="grain"></div>
+<div id="flash"></div>
+<div id="progress-bar"></div>
+<div id="dots"></div>
+
+<!-- Play Screen -->
+<div id="play-screen">
+  <h1><span>LEANER</span> FITNESS</h1>
+  <div id="play-btn">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="#000"><polygon points="5,3 19,12 5,21"/></svg>
+  </div>
+  <p>Click to play promo · ~30 seconds</p>
+</div>
+
+<!-- SCENE 0: Exterior / Logo Intro -->
+<div class="scene" id="s0">
+  <div class="bg" id="bg0"></div>
+  <div class="overlay"></div>
+  <div class="accent-bar"></div>
+  <div class="content">
+    <div class="logo-lock">
+      <div class="logo-wordmark"><span class="lean">LEANER</span> FITNESS</div>
+      <div class="divider"></div>
+      <div class="logo-sub">Bellevue, Washington</div>
+    </div>
+  </div>
+</div>
+
+<!-- SCENE 1: Transform Your Body -->
+<div class="scene" id="s1">
+  <div class="bg" id="bg1"></div>
+  <div class="overlay"></div>
+  <div class="accent-bar"></div>
+  <div class="content">
+    <div class="eyebrow">Your journey starts here</div>
+    <div class="headline">Transform<br><span>Your Body</span></div>
+    <div class="subline">State-of-the-art equipment. Expert guidance.</div>
+  </div>
+</div>
+
+<!-- SCENE 2: Stronger Every Day -->
+<div class="scene" id="s2">
+  <div class="bg" id="bg2"></div>
+  <div class="overlay"></div>
+  <div class="accent-bar"></div>
+  <div class="content">
+    <div class="eyebrow">Push beyond your limits</div>
+    <div class="headline"><span>Stronger</span><br>Every Day</div>
+    <div class="subline">A community built to lift you up.</div>
+  </div>
+</div>
+
+<!-- SCENE 3: Community -->
+<div class="scene" id="s3">
+  <div class="bg" id="bg3"></div>
+  <div class="overlay"></div>
+  <div class="accent-bar"></div>
+  <div class="content">
+    <div class="eyebrow">Real people. Real results.</div>
+    <div class="headline">Bellevue's<br><span>Fitness</span><br>Community</div>
+    <div class="subline">Join hundreds of members on their fitness journey.</div>
+  </div>
+</div>
+
+<!-- SCENE 4: Client Review -->
+<div class="scene" id="s4">
+  <div class="bg" id="bg4"></div>
+  <div class="overlay" style="background: linear-gradient(160deg, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.85) 100%);"></div>
+  <div class="accent-bar"></div>
+  <div class="content">
+    <div class="review-box">
+      <div class="stars">★★★★★</div>
+      <div class="review-text">"I absolutely love Leaner Fitness! From day one, I felt welcomed and encouraged, which helped me stay consistent and motivated. Thanks to their guidance, I've not only achieved my weight loss goals but also gained strength and confidence."</div>
+      <div class="review-name">— Monica DeMeulemeester</div>
+    </div>
+  </div>
+</div>
+
+<!-- SCENE 5: CTA -->
+<div class="scene" id="s5">
+  <div class="bg" id="bg5"></div>
+  <div class="overlay" style="background: linear-gradient(160deg, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.8) 100%);"></div>
+  <div class="accent-bar"></div>
+  <div class="content">
+    <div class="cta-box">
+      <div class="cta-main">Start Your<br><span>Fitness Journey</span><br>Today</div>
+      <div class="cta-secondary">Leaner Fitness | Bellevue, WA</div>
+      <a href="#" class="cta-button">Join Now →</a>
+      <div class="location-tag">leanerfitness.com · Bellevue, Washington</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── IMAGE LOADING ──
+  // We load the uploaded images as object URLs
+  const imagePaths = [
+    '/mnt/user-data/uploads/img2.jpg', // exterior – scene 0
+    '/mnt/user-data/uploads/img1.jpg', // interior 1 – scene 1
+    '/mnt/user-data/uploads/img4.jpg', // interior 2 – scene 2
+    '/mnt/user-data/uploads/img3.jpg', // community – scene 3
+    '/mnt/user-data/uploads/img1.jpg', // reuse interior for review bg
+    '/mnt/user-data/uploads/img4.jpg', // CTA bg
+  ];
+
+  // Map scenes to bg ids
+  const bgIds = ['bg0','bg1','bg2','bg3','bg4','bg5'];
+
+  // Try to load images; fall back to gradient if not available
+  bgIds.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (imagePaths[i]) {
+      el.style.backgroundImage = `url('${imagePaths[i]}')`;
+    }
+  });
+
+  // ── TIMING (ms) ──
+  const SCENES = 6;
+  const durations = [4500, 5000, 5000, 5000, 6000, 6000]; // per scene
+  const TOTAL = durations.reduce((a,b)=>a+b,0);
+
+  // ── DOT INDICATORS ──
+  const dotsEl = document.getElementById('dots');
+  for(let i=0;i<SCENES;i++){
+    const d = document.createElement('div');
+    d.className = 'dot' + (i===0?' active':'');
+    dotsEl.appendChild(d);
+  }
+
+  let currentScene = -1;
+  let startTime = null;
+  let elapsed = 0;
+  let running = false;
+  let raf = null;
+
+  function showScene(idx){
+    if(idx === currentScene) return;
+    // Flash cut on some transitions
+    if(currentScene >= 0 && idx < SCENES){
+      triggerFlash();
+    }
+    // Hide all
+    document.querySelectorAll('.scene').forEach((s,i)=>{
+      s.classList.remove('active');
+    });
+    // Show new
+    const next = document.getElementById('s'+idx);
+    if(next) {
+      // Small delay for flash
+      setTimeout(()=>{ next.classList.add('active'); }, 80);
+    }
+    // Update dots
+    document.querySelectorAll('.dot').forEach((d,i)=>{
+      d.classList.toggle('active', i===idx);
+    });
+    currentScene = idx;
+  }
+
+  function triggerFlash(){
+    const f = document.getElementById('flash');
+    f.style.opacity = '0.15';
+    setTimeout(()=>{ f.style.opacity = '0'; }, 150);
+  }
+
+  function tick(ts){
+    if(!startTime) startTime = ts;
+    elapsed = ts - startTime;
+
+    // Determine scene
+    let acc = 0;
+    let sceneIdx = SCENES - 1;
+    for(let i=0;i<SCENES;i++){
+      if(elapsed < acc + durations[i]){
+        sceneIdx = i;
+        break;
+      }
+      acc += durations[i];
+    }
+    showScene(sceneIdx);
+
+    // Progress bar
+    const pct = Math.min(100, (elapsed / TOTAL) * 100);
+    document.getElementById('progress-bar').style.width = pct + '%';
+
+    if(elapsed < TOTAL){
+      raf = requestAnimationFrame(tick);
+    } else {
+      // Loop or stop
+      setTimeout(()=>{
+        startTime = null;
+        elapsed = 0;
+        raf = requestAnimationFrame(tick);
+      }, 2000);
+    }
+  }
+
+  // ── PLAY ──
+  document.getElementById('play-screen').addEventListener('click', ()=>{
+    document.getElementById('play-screen').style.display = 'none';
+    running = true;
+    raf = requestAnimationFrame(tick);
+  });
+</script>
+</body>
+</html>
